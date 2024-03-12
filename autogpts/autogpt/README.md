@@ -140,7 +140,7 @@ by default on `http://localhost:8000`.
 For more comprehensive instructions, see the [user guide][docs/usage].
 
 [docs]: https://docs.agpt.co/autogpt
-[docs/setup]: https://docs.agpt.co/autogpt/setup
+[docs/setup]: https://docs.agpt.co/pautogpt/setup
 [docs/usage]: https://docs.agpt.co/autogpt/usage
 [docs/plugins]: https://docs.agpt.co/autogpt/plugins
 
