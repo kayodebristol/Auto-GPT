@@ -1,13 +1,12 @@
 from typing import Optional
 
+from forge.config.ai_directives import AIDirectives
+from forge.config.ai_profile import AIProfile
+from forge.config.config import Config
+from forge.file_storage.base import FileStorage
+from forge.llm.providers import ChatModelProvider
+
 from autogpt.agents.agent import Agent, AgentConfiguration, AgentSettings
-from autogpt.commands import COMMAND_CATEGORIES
-from autogpt.config import AIDirectives, AIProfile, Config
-from autogpt.core.resource.model_providers import ChatModelProvider
-from autogpt.file_storage.base import FileStorage
-from autogpt.logs.config import configure_chat_plugins
-from autogpt.models.command_registry import CommandRegistry
-from autogpt.plugins import scan_plugins
 
 
 def create_agent(
@@ -67,15 +66,6 @@ def _configure_agent(
             " must be specified"
         )
 
-    app_config.plugins = scan_plugins(app_config)
-    configure_chat_plugins(app_config)
-
-    # Create a CommandRegistry instance and scan default folder
-    command_registry = CommandRegistry.with_command_modules(
-        modules=COMMAND_CATEGORIES,
-        config=app_config,
-    )
-
     agent_state = state or create_agent_state(
         agent_id=agent_id,
         task=task,
@@ -89,7 +79,6 @@ def _configure_agent(
     return Agent(
         settings=agent_state,
         llm_provider=llm_provider,
-        command_registry=command_registry,
         file_storage=file_storage,
         legacy_config=app_config,
     )
@@ -102,9 +91,6 @@ def create_agent_state(
     directives: AIDirectives,
     app_config: Config,
 ) -> AgentSettings:
-    agent_prompt_config = Agent.default_settings.prompt_config.copy(deep=True)
-    agent_prompt_config.use_functions_api = app_config.openai_functions
-
     return AgentSettings(
         agent_id=agent_id,
         name=Agent.default_settings.name,
@@ -117,8 +103,6 @@ def create_agent_state(
             smart_llm=app_config.smart_llm,
             allow_fs_access=not app_config.restrict_to_workspace,
             use_functions_api=app_config.openai_functions,
-            plugins=app_config.plugins,
         ),
-        prompt_config=agent_prompt_config,
         history=Agent.default_settings.history.copy(deep=True),
     )

@@ -3,8 +3,9 @@ from __future__ import annotations
 import uuid
 from pathlib import Path
 
+from forge.file_storage.base import FileStorage
+
 from autogpt.agents.agent import AgentSettings
-from autogpt.file_storage.base import FileStorage
 
 
 class AgentManager:
@@ -20,9 +21,9 @@ class AgentManager:
     def list_agents(self) -> list[str]:
         """Return all agent directories within storage."""
         agent_dirs: list[str] = []
-        for dir in self.file_manager.list_folders():
-            if self.file_manager.exists(dir / "state.json"):
-                agent_dirs.append(dir.name)
+        for file_path in self.file_manager.list_files():
+            if len(file_path.parts) == 2 and file_path.name == "state.json":
+                agent_dirs.append(file_path.parent.name)
         return agent_dirs
 
     def get_agent_dir(self, agent_id: str) -> Path:
