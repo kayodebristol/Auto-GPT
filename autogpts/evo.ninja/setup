@@ -4,6 +4,9 @@
 SCRIPT_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" &> /dev/null && pwd )"
 cd "$SCRIPT_DIR"
 
+# Add an exception for this directory, call:
+git config --global --add safe.directory /workspaces/Auto-GPT/autogpts/evo.ninja
+
 # Clone the repo and checkout the release branch
 REPO="https://github.com/polywrap/evo.ninja"
 BRANCH="release/autogpt"
